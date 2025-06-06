@@ -12,7 +12,7 @@ exports.protect = async (req, res, next) => {
                 message: 'Not authorized to access this route'
             });
         }
-// change update
+
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             if (decoded.role === 'organizer') {

@@ -1,113 +1,120 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { loginSuccess } from "../redux/slices/authSlice";
+import React, { useState } from 'react';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../redux/features/authSlice';
+import { useNavigate } from 'react-router-dom';
 
-function AdminLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
+export default function AdminLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const submitHandler = async (e) => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrorMsg(''); // Clear error on input
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrorMsg('');
+    setLoading(true);
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/admin/login`,
-        { email, password },
+        formData,
         { withCredentials: true }
       );
 
       if (response.status === 200) {
-        console.log(response.data);
-        dispatch(loginSuccess(response.data));
-        navigate("/admin/dashboard", { replace: true });
-        return; // Exit early on success, don't clear fields
+        const profile = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/admin/profile`,
+          { withCredentials: true }
+        );
+
+        const user = {
+          ...profile.data.data,
+          token: response.data.token, // ✅ Attach token for Redux to store it
+        };
+
+        dispatch(loginSuccess(user));
+        navigate('/admin/dashboard', { replace: true });
       }
     } catch (error) {
-      console.log(error);
-      if (error.response?.data?.errors) {
-        setError(error.response.data.errors[0]?.msg);
-      } else if (error.response?.data?.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("Login failed. Please try again!");
-      }
-      // Only clear fields on error
-      setEmail("");
-      setPassword("");
+      console.error('Login failed:', error);
+      setErrorMsg(error.response?.data?.message || 'Invalid email or password');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex min-h-screen">
-        {/* Left Section - Branding */}
-        <div className="hidden md:flex md:w-1/2 bg-[#2B293D] text-white p-8 flex-col relative">
-          <div className="absolute top-10 left-10">
-            <h1 className="text-3xl font-bold cursor-pointer" onClick={() => navigate('/')}>
-              🎟️ GatherGuru
-            </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative overflow-hidden">
+      {/* Background Shape */}
+      <div className="absolute top-0 left-0 w-[55%] h-full bg-[#1e294f] transform -skew-x-[5deg] z-0"></div>
+
+      {/* Login Form Card */}
+      <div className="relative z-10 bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+          Login <span className="text-purple-600">GatherGuru</span>
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="text-sm font-medium text-gray-700">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+              placeholder="Enter your email"
+              required
+            />
           </div>
-          <div className="mt-auto mb-auto">
-            <h2 className="text-5xl font-bold mb-4">Admin Portal</h2>
-            <h3 className="text-3xl font-bold">Manage your events and organizers</h3>
-          </div>
-        </div>
 
-        {/* Right Section - Login Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center p-8">
-          <div className="max-w-md w-full">
-            <h1 className="text-3xl font-bold mb-8">Admin Login</h1>
-            
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              {error && (
-                <div className="bg-red-100 text-red-700 p-4 rounded-md mb-6">
-                  {error}
-                </div>
-              )}
-
-              <form onSubmit={submitHandler} className="space-y-6">
-                <div>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter Your Email"
-                    className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2B293D]"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Your Password"
-                    className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2B293D]"
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-[#2B293D] text-white py-3 rounded-md font-semibold hover:bg-[#1a1928] transition-colors"
-                >
-                  Login
-                </button>
-              </form>
+          <div>
+            <label className="text-sm font-medium text-gray-700">Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                placeholder="Enter password"
+                required
+              />
+              <span
+                className="absolute right-3 top-[50%] transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </span>
             </div>
           </div>
-        </div>
+
+          {errorMsg && (
+            <div className="text-sm text-red-600 text-center">{errorMsg}</div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-2 ${
+              loading ? 'bg-gray-400' : 'bg-[#1e294f] hover:bg-[#2f3c66]'
+            } text-white rounded-lg transition duration-300 font-semibold`}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
       </div>
     </div>
   );
 }
-
-export default AdminLogin; 

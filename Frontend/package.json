@@ -18,6 +18,7 @@
     "@nivo/line": "^0.99.0",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.9.0",
+    "date-fns": "^4.1.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "react": "^19.1.0",

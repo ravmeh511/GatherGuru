@@ -8,7 +8,11 @@ const {
     registerOrganizer,
     organizerLogin,
     organizerLogout,
-    getOrganizerProfile
+    getOrganizerProfile,
+    registerUser,
+    userLogin,
+    userLogout,
+    getUserProfile
 } = require('../controllers/authController');
 
 // Admin routes
@@ -21,5 +25,11 @@ router.post('/organizer/register', registerOrganizer);
 router.post('/organizer/login', organizerLogin);
 router.get('/organizer/logout', protect, organizerLogout);
 router.get('/organizer/profile', protect, getOrganizerProfile);
+
+// User routes
+router.post('/user/register', registerUser);
+router.post('/user/login', userLogin);
+router.get('/user/logout', protect, userLogout);
+router.get('/user/profile', protect, getUserProfile);
 
 module.exports = router; 

@@ -331,9 +331,17 @@ exports.getUserProfile = async (req, res) => {
             success: true,
             data: {
                 _id: user._id,
-                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email,
                 phone: user.phone,
+                website: user.website,
+                company: user.company,
+                address: user.address,
+                city: user.city,
+                country: user.country,
+                pincode: user.pincode,
+                profilePicture: user.profilePicture,
                 role: user.role,
                 status: user.status
             }
@@ -365,6 +373,118 @@ exports.getOrganizerProfile = async (req, res) => {
         res.status(500).json({
             success: false,
             message: error.message
+        });
+    }
+};
+
+exports.updateUserProfile = async (req, res) => {
+    try {
+        const { firstName, lastName, website, company, phoneNumber, address, city, country, pincode } = req.body;
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Update user fields
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.website = website || user.website;
+        user.company = company || user.company;
+        user.phone = phoneNumber || user.phone;
+        user.address = address || user.address;
+        user.city = city || user.city;
+        user.country = country || user.country;
+        user.pincode = pincode || user.pincode;
+
+        const updatedUser = await user.save();
+
+        res.json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: {
+                _id: updatedUser._id,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                email: updatedUser.email,
+                website: updatedUser.website,
+                company: updatedUser.company,
+                phone: updatedUser.phone,
+                address: updatedUser.address,
+                city: updatedUser.city,
+                country: updatedUser.country,
+                pincode: updatedUser.pincode,
+                profilePicture: updatedUser.profilePicture,
+                role: updatedUser.role,
+                status: updatedUser.status
+            }
+        });
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Error updating profile'
+        });
+    }
+};
+
+exports.updateUserProfilePicture = async (req, res) => {
+    try {
+        console.log('Starting profile picture upload...');
+        console.log('Request file:', req.file);
+        console.log('Request user:', req.user);
+
+        if (!req.file) {
+            console.log('No file uploaded');
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        // Get user ID from auth middleware
+        const userId = req.user._id;
+        console.log('User ID:', userId);
+
+        const user = await User.findById(userId);
+        if (!user) {
+            console.log('User not found with ID:', userId);
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        console.log('Found user:', user);
+        console.log('File details:', {
+            filename: req.file.filename,
+            path: req.file.path,
+            mimetype: req.file.mimetype
+        });
+
+        // Update user's profile picture path
+        user.profilePicture = `uploads/profile-pictures/${req.file.filename}`;
+        await user.save();
+
+        console.log('Profile picture updated successfully');
+        res.status(200).json({
+            success: true,
+            data: {
+                profilePicture: user.profilePicture
+            },
+            message: 'Profile picture updated successfully'
+        });
+    } catch (error) {
+        console.error('Error in updateUserProfilePicture:', error);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Error updating profile picture',
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 }; 

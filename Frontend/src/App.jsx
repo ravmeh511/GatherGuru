@@ -9,6 +9,7 @@ import UserSignup from "./Componets/User/UserSignup";
 import { UserDashboard } from "./Componets/User/UserDashboard";
 import UserProtection from "./Componets/User/ProtectionWrapper/UserProtection";
 import UserLogin from "./Componets/User/UserLogin";
+import UserProfile from "./Componets/User/UserProfile";
 import OrganizerLogin from "./Componets/Organizer/OrganizerLogin";
 import OrganizerSignup from "./Componets/Organizer/OrganizerSignup";
 import OrganizerDashboard from "./Componets/Organizer/OrganizerDashboard";
@@ -32,6 +33,7 @@ function App() {
       {/* User Routes */}
       <Route path="/user/signup" element={<UserSignup />} />
       <Route path="/user/dashboard" element={<UserProtection><UserDashboard /></UserProtection>} />
+      <Route path="/user/profile" element={<UserProtection><UserProfile /></UserProtection>} />
       <Route path="/events" element={<ExploreEvents />} />
       <Route path="/events/:eventId" element={<UserEventDetails />} />
 

@@ -28,7 +28,7 @@ const UserLogin = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/user/login', formData);
+      const response = await axios.post('/api/user/login', formData);
       if (response.data.success) {
         dispatch(login({ 
           token: response.data.token, 

@@ -23,11 +23,16 @@ app.use(cors({
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 const eventBannersDir = path.join(uploadsDir, 'event-banners');
+const profilePicturesDir = path.join(uploadsDir, 'profile-pictures');
+
 if (!require('fs').existsSync(uploadsDir)) {
     require('fs').mkdirSync(uploadsDir);
 }
 if (!require('fs').existsSync(eventBannersDir)) {
     require('fs').mkdirSync(eventBannersDir);
+}
+if (!require('fs').existsSync(profilePicturesDir)) {
+    require('fs').mkdirSync(profilePicturesDir);
 }
 
 // Serve uploaded files

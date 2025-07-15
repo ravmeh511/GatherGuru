@@ -44,7 +44,7 @@ export const UserDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get('/events/popular');
+      const response = await axios.get('/api/events/popular');
       console.log('Popular events response:', response.data);
       setPopularEvents(response.data.data);
     } catch (error) {
@@ -62,7 +62,7 @@ export const UserDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`/events/search?query=${searchQuery}`);
+      const response = await axios.get(`/api/events/search?query=${searchQuery}`);
       setSearchResults(response.data.data);
     } catch (error) {
       console.error('Error searching events:', error);
@@ -218,7 +218,7 @@ const EventSection = ({ title, events, formatDate, navigate }) => (
               onClick={() => navigate(`/events/${event._id}`)}
             >
               <img
-                src={`http://localhost:5000/${event.bannerImage}`}
+                src={event.bannerImage ? `${axios.defaults.baseURL}/${event.bannerImage}` : 'https://via.placeholder.com/800x400?text=Event+Image'}
                 alt={event.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {

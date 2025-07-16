@@ -111,7 +111,7 @@ The application uses a comprehensive database schema with the following key enti
    # Start frontend
    cd frontend
    npm start
-   done
+   done2
    ```
 
 ## Project Structure

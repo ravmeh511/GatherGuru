@@ -28,10 +28,10 @@ export default function AdminNavbar() {
   };
 
   return (
-    <header className="bg-[#1e294f] text-white px-6 py-3 flex justify-between items-center shadow">
+    <header className="bg-[#2B293D] text-white px-6 py-3 flex justify-between items-center shadow">
       {/* Logo + Title */}
       <Link to="/admin/dashboard" className="flex items-center space-x-2">
-        <img src={logo} alt="GatherGuru Logo" className="h-20 w-full" />
+        <img src={logo} alt="GatherGuru Logo" className="h-full w-[50%]" />
         
       </Link>
 

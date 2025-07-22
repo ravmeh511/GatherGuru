@@ -1,76 +1,83 @@
-import React, { useState } from "react";
-import gatherguru_logo from "../../assets/gatherguru_logo.svg";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/features/authSlice";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/features/authSlice';
+import axios from '../../utils/axios';
+import logo from '../../assets/gatherguru_logo.svg';
 
-const UserSignup = () => {
+const OrganizerSignup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    organization: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setError(""); // Clear error when user types
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setError(''); // Clear error when user types
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
     // Validate password length
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      setError('Password must be at least 6 characters long');
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await axios.post("/auth/signup", {
+      const response = await axios.post('/auth/organizer/signup', {
         name: formData.name,
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
+        organization: formData.organization
       });
 
-      dispatch(login({ token: response.data.token, role: "user" }));
-      navigate("/user/dashboard");
+      dispatch(login({ token: response.data.token, role: 'organizer' }));
+      navigate('/organizer/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSignup = () => {
+    // Implement Google signup functionality
+    console.log('Google signup clicked');
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Section - Purple Background */}
       <div className="w-full md:w-1/2 bg-[#2A2B3A] text-white p-6 md:p-12 flex flex-col min-h-[300px] md:min-h-screen">
-        <img src={gatherguru_logo} alt="GatherGuru Logo" className="w-24 md:w-32 mb-10 md:mb-20" />
+        <img src={logo} alt="GatherGuru Logo" className="w-24 md:w-32 mb-10 md:mb-20" />
         <div className="flex-grow flex flex-col justify-center">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Join GatherGuru today.
+            Start organizing amazing events.
           </h1>
           <p className="text-lg md:text-xl text-gray-300">
-            Discover amazing events and connect with like-minded people.
+            Join GatherGuru as an organizer and create unforgettable experiences.
           </p>
         </div>
       </div>
@@ -79,8 +86,8 @@ const UserSignup = () => {
       <div className="w-full md:w-1/2 bg-white px-4 py-8 md:p-12 flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Create your account</h2>
-            <p className="mt-2 text-gray-600">Start exploring events near you</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Create your organizer account</h2>
+            <p className="mt-2 text-gray-600">Start creating and managing events</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
@@ -102,6 +109,22 @@ const UserSignup = () => {
                 onChange={handleChange}
                 className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2A2B3A] focus:border-transparent transition-colors"
                 placeholder="Enter your full name"
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="organization" className="block text-sm font-medium text-gray-700 mb-1 md:mb-2">
+                Organization Name
+              </label>
+              <input
+                id="organization"
+                type="text"
+                name="organization"
+                value={formData.organization}
+                onChange={handleChange}
+                className="w-full px-3 py-2 md:px-4 md:py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#2A2B3A] focus:border-transparent transition-colors"
+                placeholder="Enter your organization name"
                 required
               />
             </div>
@@ -147,7 +170,7 @@ const UserSignup = () => {
               <div className="relative">
                 <input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -202,7 +225,7 @@ const UserSignup = () => {
             <div className="mt-4 md:mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
-                <Link to="/" className="text-[#2A2B3A] font-medium hover:underline">
+                <Link to="/organizer/login" className="text-[#2A2B3A] font-medium hover:underline">
                   Sign in
                 </Link>
               </p>
@@ -211,10 +234,10 @@ const UserSignup = () => {
             <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
               <div className="flex justify-center space-x-4">
                 <Link
-                  to="/organizer/signup"
+                  to="/"
                   className="text-sm text-gray-600 hover:text-[#2A2B3A] transition-colors"
                 >
-                  Sign up as Organizer
+                  Sign up as User
                 </Link>
               </div>
             </div>
@@ -225,4 +248,4 @@ const UserSignup = () => {
   );
 };
 
-export default UserSignup;
+export default OrganizerSignup; 

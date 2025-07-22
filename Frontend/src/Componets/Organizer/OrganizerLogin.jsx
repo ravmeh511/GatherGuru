@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import axios from '../../utils/axios';
 import { login } from '../../redux/features/authSlice';
+import axios from '../../utils/axios';
 import logo from '../../assets/gatherguru_logo.svg';
 
-const UserLogin = () => {
+const OrganizerLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -28,18 +28,22 @@ const UserLogin = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/api/user/login', formData);
+      const response = await axios.post('/organizer/login', formData);
+      console.log('Login response:', response.data); // Debug log
+      
       if (response.data.success) {
-        dispatch(login({ 
-          token: response.data.token, 
-          role: response.data.data.role,
+        dispatch(login({
+          token: response.data.data.token,
+          role: 'organizer',
           userData: response.data.data
         }));
-        navigate('/user/dashboard');
+        
+        navigate('/organizer/dashboard');
       } else {
         setError(response.data.message || 'Login failed');
       }
     } catch (err) {
+      console.error('Login error:', err); // Debug log
       setError(err.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
@@ -53,10 +57,10 @@ const UserLogin = () => {
         <img src={logo} alt="GatherGuru Logo" className="w-24 md:w-32 mb-10 md:mb-20" />
         <div className="flex-grow flex flex-col justify-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4">
-            Discover tailored events.
+            Create amazing events.
           </h1>
           <p className="text-lg md:text-xl text-gray-300">
-            Sign up for personalized recommendations today!
+            Sign in to manage your events and connect with attendees!
           </p>
         </div>
       </div>
@@ -66,7 +70,7 @@ const UserLogin = () => {
         <div className="w-full max-w-md">
           <div className="text-center mb-6 md:mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Welcome Back!</h2>
-            <p className="mt-2 text-gray-600">Please sign in to your account</p>
+            <p className="mt-2 text-gray-600">Please sign in to your organizer account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
@@ -138,7 +142,7 @@ const UserLogin = () => {
             <div className="mt-4 md:mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <Link to="/user/signup" className="text-[#2B293D] font-medium hover:underline">
+                <Link to="/organizer/signup" className="text-[#2B293D] font-medium hover:underline">
                   Sign up
                 </Link>
               </p>
@@ -147,10 +151,10 @@ const UserLogin = () => {
             <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
               <div className="flex justify-center space-x-4">
                 <Link
-                  to="/organizer/login"
+                  to="/"
                   className="text-sm text-gray-600 hover:text-[#2B293D] transition-colors"
                 >
-                  Login as Organizer
+                  Login as User
                 </Link>
                 <span className="text-gray-300">|</span>
                 <Link
@@ -168,4 +172,4 @@ const UserLogin = () => {
   );
 };
 
-export default UserLogin;
+export default OrganizerLogin; 

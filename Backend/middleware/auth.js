@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/adminModel');
 const Organizer = require('../models/organizerModel');
+const User = require('../models/userModel');
 
 exports.protect = async (req, res, next) => {
     try {
@@ -15,7 +16,16 @@ exports.protect = async (req, res, next) => {
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            if (decoded.role === 'organizer') {
+            
+            if (decoded.role === 'user') {
+                req.user = await User.findById(decoded.id);
+                if (!req.user) {
+                    return res.status(401).json({
+                        success: false,
+                        message: 'Not authorized to access this route'
+                    });
+                }
+            } else if (decoded.role === 'organizer') {
                 req.organizer = await Organizer.findById(decoded.id);
                 if (!req.organizer) {
                     return res.status(401).json({
@@ -31,15 +41,23 @@ exports.protect = async (req, res, next) => {
                         message: 'Not authorized to access this route'
                     });
                 }
+            } else {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid role'
+                });
             }
+            
             next();
         } catch (err) {
+            console.error('JWT verification error:', err);
             return res.status(401).json({
                 success: false,
                 message: 'Not authorized to access this route'
             });
         }
     } catch (error) {
+        console.error('Auth middleware error:', error);
         res.status(500).json({
             success: false,
             message: error.message

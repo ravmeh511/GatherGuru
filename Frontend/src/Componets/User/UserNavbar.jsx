@@ -17,7 +17,7 @@ const UserNavbar = () => {
   };
 
   return (
-    <nav className="bg-[#1c1b29] text-white px-6 py-4 shadow-md relative z-50">
+    <nav className="bg-[#2B293D] text-white px-6 py-2 shadow-md relative z-50">
       <div className="flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
@@ -27,7 +27,7 @@ const UserNavbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-sm">
-          <Link to="/" className="hover:text-yellow-400">Home</Link>
+          <Link to="/user/dashboard" className="hover:text-yellow-400">Home</Link>
           <Link to="/events" className="hover:text-yellow-400">Events</Link>
           <Link to="/about" className="hover:text-yellow-400">About</Link>
           <Link to="/contact" className="hover:text-yellow-400">Contact</Link>
@@ -70,7 +70,7 @@ const UserNavbar = () => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden mt-4 space-y-2 text-sm">
-          <Link to="/" className="block hover:text-yellow-400">Home</Link>
+          <Link to="/user/dashboard" className="block hover:text-yellow-400">Home</Link>
           <Link to="/events" className="block hover:text-yellow-400">Events</Link>
           <Link to="/about" className="block hover:text-yellow-400">About</Link>
           <Link to="/contact" className="block hover:text-yellow-400">Contact</Link>

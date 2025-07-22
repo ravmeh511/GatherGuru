@@ -2,6 +2,9 @@
   "name": "gatherguru-backend",
   "version": "1.0.0",
   "description": "Backend for GatherGuru event management platform",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -14,7 +17,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3"
+    "mongoose": "^7.0.3",
+    "multer": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
